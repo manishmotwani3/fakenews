@@ -1,8 +1,10 @@
 # fakenews
 Dataset 1: FactCheck dataset :  https://homes.cs.washington.edu/~hrashkin/factcheck.html
+
 Dataset 2: Kaggle dataset(Fake, 1 year old) + Signal Media Dataset(Real, Sample 50000 news articles) : http://research.signalmedia.co/newsir16/signal-dataset.html, https://www.kaggle.com/mrisdal/fake-news 
 
 Dataset:
+
 Model 1 trained on Dataset1(4 way classification)
 
 Model 1 test on Dataset2 (2 way classification)
