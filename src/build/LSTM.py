@@ -9,6 +9,8 @@ from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence
 from nltk.tokenize import RegexpTokenizer
 import numpy as np
 
+from gensim.models import KeyedVectors
+
 
 # Class for LSTM 
 
@@ -23,7 +25,7 @@ class LSTM(torch.nn.Module):
 
         self.lstm = torch.nn.LSTM(embedding_dim, hidden_dim)
 
-        self.hidden2tag = torch.nn.Linear(hidden_dim, 1)
+        self.hidden2tag = torch.nn.Linear(hidden_dim, 4)
         self.hidden = self.init_hidden(mini_batch_size)
 
     def init_hidden(self, mini_batch_size):
@@ -31,9 +33,24 @@ class LSTM(torch.nn.Module):
         return (autograd.Variable(torch.zeros(1, mini_batch_size, self.hidden_dim)),
                 autograd.Variable(torch.zeros(1, mini_batch_size, self.hidden_dim)))
 
+    def pretrained_embs(self, dictt, idx2word):
+
+        word_vectors = KeyedVectors.load_word2vec_format('../../dataset/GoogleNews-vectors-negative300.bin', binary=True) 
+
+        self.word_embeddings.weight.requires_grad=False
+
+        for i in range(len(idx2word)):
+            print (i)
+            if (idx2word[i] != 'zero_embed'):
+                self.word_embeddings[i] = word_vectors.get_vector(idx2word[i])
+
+            #self.word_embeddings[i] = word_vectors.get_vector(idx2word[i])
+
+        
+
+
 
     def forward(self, sentences, seq_lens):
-
 
         embeds = self.word_embeddings(sentences)
 
@@ -41,13 +58,10 @@ class LSTM(torch.nn.Module):
 
         embeds = pack_padded_sequence(embeds, np.array(seq_lens))
 
-
         lstm_out, self.hidden = self.lstm(
             embeds, self.hidden)
 
         lstm_out, _ = pad_packed_sequence(lstm_out)
-
-
 
         out_vals= autograd.Variable(torch.zeros(lstm_out.shape[1],lstm_out.shape[2]))
         for i, val in enumerate(seq_lens):

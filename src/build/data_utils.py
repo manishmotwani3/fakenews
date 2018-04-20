@@ -72,6 +72,6 @@ def prep_minibatch(mini_batch_size, i, corpuss, tagss, dictt):
 	seq_l = seq_l[::-1]
 
 	batch_in = Variable(torch.LongTensor(input_tensor))
-	batch_out = Variable(torch.FloatTensor(output_tensor))
+	batch_out = Variable(torch.LongTensor(output_tensor))
 
 	return (batch_in, batch_out, seq_l)
